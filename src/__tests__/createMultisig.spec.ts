@@ -1,12 +1,11 @@
-import { getProgramFromEnv } from "../common/utils";
-import { prepareDevnetEnv } from "./common";
+import { getProgramFromEnvWithWallet } from "../utils";
 import { createMultisig } from "../commands/createMultisig";
-import { TEST_KEYS } from "./keys";
+import { ensureDevnetEnv, TEST_KEYS } from "./common";
 
 describe("create multisig", () => {
   it("should create success", async () => {
-    const program = getProgramFromEnv(TEST_KEYS.memberA);
-    await prepareDevnetEnv(program, TEST_KEYS.memberA);
+    const program = getProgramFromEnvWithWallet(TEST_KEYS.memberA);
+    await ensureDevnetEnv(program, TEST_KEYS.memberA);
 
     await createMultisig(
       program,

@@ -1,22 +1,18 @@
 import {
   findMultisigSigner,
-  getProgramFromEnv,
+  getProgramFromEnvWithWallet,
   setupJSONPrint,
-} from "../common/utils";
-import { setProposals } from "../proposals";
-import { prepareDevnetEnv } from "./common";
-import { testProposals } from "./proposals";
+} from "../utils";
+import { ensureDevnetEnv } from "./common";
+import { testProposals, TEST_KEYS } from "./common";
 import { batchVerify } from "../commands/batchVerify";
-import { ENV } from "../env";
-import { TEST_KEYS } from "./keys";
 
 describe("create proposals", () => {
   it("should create success", async () => {
     setupJSONPrint();
-    setProposals(testProposals); //replace default global proposals with test proposals
 
-    const program = getProgramFromEnv(TEST_KEYS.memberB);
-    await prepareDevnetEnv(program, TEST_KEYS.memberB);
+    const program = getProgramFromEnvWithWallet(TEST_KEYS.memberB);
+    await ensureDevnetEnv(program, TEST_KEYS.memberB);
 
     const multisigSigner = await findMultisigSigner(
       program.programId,
@@ -26,10 +22,10 @@ describe("create proposals", () => {
     await batchVerify(
       program,
       {
-        multisigProgram: ENV.multisigProgram,
         multisig: TEST_KEYS.multisig.publicKey,
         multisigSigner,
       },
+      testProposals,
       true
     );
   });
